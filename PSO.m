@@ -1,38 +1,35 @@
-% µÚ2½²£ºÁ£×ÓÈºËã·¨
-% ×÷Õß£º Ally
-% ÈÕÆÚ£º 2021/07/10
 clc
 clear
 close all
 
-%% ÈıÎ¬Â·¾¶¹æ»®Ä£ĞÍ¶¨Òå
+%% ä¸‰ç»´è·¯å¾„è§„åˆ’æ¨¡å‹å®šä¹‰
 startPos = [40, 129, 5];
 goalPos = [951, 833, 10];
 
-% Ëæ»ú¶¨ÒåÉ½·åµØÍ¼
-mapRange = [1000,1000,120];              % µØÍ¼³¤¡¢¿í¡¢¸ß·¶Î§
+% éšæœºå®šä¹‰å±±å³°åœ°å›¾
+mapRange = [1000,1000,120];              % åœ°å›¾é•¿ã€å®½ã€é«˜èŒƒå›´
 [X,Y,Z] = defMap4(mapRange);
 
-%% ³õÊ¼²ÎÊıÉèÖÃ
-N = 100;           % µü´ú´ÎÊı
-M = 50;            % Á£×ÓÊıÁ¿
-pointNum = 4;      % Ã¿Ò»¸öÁ£×Ó°üº¬Èı¸öÎ»ÖÃµã
-w = 1.2;           % ¹ßĞÔÈ¨ÖØ
-c1 = 1.5;            % Éç»áÈ¨ÖØ
-c2 = 1.5;            % ÈÏÖªÈ¨ÖØ
+%% åˆå§‹å‚æ•°è®¾ç½®
+N = 100;           % è¿­ä»£æ¬¡æ•°
+M = 50;            % ç²’å­æ•°é‡
+pointNum = 4;      % æ¯ä¸€ä¸ªç²’å­åŒ…å«ä¸‰ä¸ªä½ç½®ç‚¹
+w = 1.2;           % æƒ¯æ€§æƒé‡
+c1 = 1.5;            % ç¤¾ä¼šæƒé‡
+c2 = 1.5;            % è®¤çŸ¥æƒé‡
 
-% Á£×ÓÎ»ÖÃ½çÏŞ
+% ç²’å­ä½ç½®ç•Œé™
 posBound = [[0,0,10]',[1000,1000,60]'];
 
-% Á£×ÓËÙ¶È½çÏŞ
+% ç²’å­é€Ÿåº¦ç•Œé™
 alpha = 0.1;
 velBound(:,2) = alpha*(posBound(:,2) - posBound(:,1));
 velBound(:,1) = -velBound(:,2);
 % velBound(3,1)=-4;
 % velBound(3,2)=4;
 
-%% ÖÖÈº³õÊ¼»¯
-% ³õÊ¼»¯Ò»¸ö¿ÕµÄÁ£×Ó½á¹¹Ìå
+%% ç§ç¾¤åˆå§‹åŒ–
+% åˆå§‹åŒ–ä¸€ä¸ªç©ºçš„ç²’å­ç»“æ„ä½“
 particles.pos= [];
 particles.v = [];
 particles.fitness = [];
@@ -41,15 +38,15 @@ particles.Best.pos = [];
 particles.Best.fitness = [];
 particles.Best.path = [];
 
-% ¶¨ÒåM¸öÁ£×ÓµÄ½á¹¹Ìå
+% å®šä¹‰Mä¸ªç²’å­çš„ç»“æ„ä½“
 particles = repmat(particles,M,1);
 
-% ³õÊ¼»¯Ã¿Ò»´úµÄ×îÓÅÁ£×Ó
+% åˆå§‹åŒ–æ¯ä¸€ä»£çš„æœ€ä¼˜ç²’å­
 GlobalBest.fitness = [inf,inf];
 
-% µÚÒ»´úµÄ¸öÌåÁ£×Ó³õÊ¼»¯
+% ç¬¬ä¸€ä»£çš„ä¸ªä½“ç²’å­åˆå§‹åŒ–
 for i = 1:M 
-    % Á£×Ó°´ÕÕÕıÌ¬·Ö²¼Ëæ»úÉú³É
+    % ç²’å­æŒ‰ç…§æ­£æ€åˆ†å¸ƒéšæœºç”Ÿæˆ
     particles(i).pos.x = unifrnd(posBound(1,1),posBound(1,2),1,pointNum);
     particles(i).pos.x=sort(particles(i).pos.x);
     particles(i).pos.y = unifrnd(posBound(2,1),posBound(2,2),1,pointNum);
@@ -57,45 +54,45 @@ for i = 1:M
     particles(i).pos.z = unifrnd(posBound(3,1),posBound(3,2),1,pointNum);
     %particles(i).pos.z=sort(particles(i).pos.z);
     
-    % ³õÊ¼»¯ËÙ¶È
+    % åˆå§‹åŒ–é€Ÿåº¦
 %     particles(i).v.x = zeros(1, pointNum);
 %     particles(i).v.y = zeros(1, pointNum);
 %     particles(i).v.z = zeros(1, pointNum);
     particles(i).v.x=unifrnd(velBound(1,1),velBound(1,2),1,pointNum);
     particles(i).v.y=unifrnd(velBound(2,1),velBound(2,2),1,pointNum);
     particles(i).v.z=unifrnd(velBound(3,1),velBound(3,2),1,pointNum);
-    % ÊÊÓ¦¶È
+    % é€‚åº”åº¦
     [flag,fitness,path] = calFitness(startPos, goalPos,X,Y,Z, particles(i).pos);
     
-    % Åö×²¼ì²âÅĞ¶Ï
+    % ç¢°æ’æ£€æµ‹åˆ¤æ–­
     if flag == 1
-        % Èôflag=1£¬±íÃ÷´ËÂ·¾¶½«ÓëÕÏ°­ÎïÏà½»£¬ÔòÔö´óÊÊÓ¦¶ÈÖµ
+        % è‹¥flag=1ï¼Œè¡¨æ˜æ­¤è·¯å¾„å°†ä¸éšœç¢ç‰©ç›¸äº¤ï¼Œåˆ™å¢å¤§é€‚åº”åº¦å€¼
         particles(i).fitness = 1000*fitness;
         particles(i).path = path;
     else
-        % ·ñÔò£¬±íÃ÷¿ÉÒÔÑ¡Ôñ´ËÂ·¾¶
+        % å¦åˆ™ï¼Œè¡¨æ˜å¯ä»¥é€‰æ‹©æ­¤è·¯å¾„
         particles(i).fitness = fitness;
         particles(i).path = path;
     end
     
-    % ¸üĞÂ¸öÌåÁ£×ÓµÄ×îÓÅ
+    % æ›´æ–°ä¸ªä½“ç²’å­çš„æœ€ä¼˜
     particles(i).Best.pos = particles(i).pos;
     particles(i).Best.fitness = particles(i).fitness;
     particles(i).Best.path = particles(i).path;
     
-    % ¸üĞÂÈ«¾Ö×îÓÅ
+    % æ›´æ–°å…¨å±€æœ€ä¼˜
     if (particles(i).Best.fitness(1) < GlobalBest.fitness(1))&(particles(i).Best.fitness(2) < GlobalBest.fitness(2))
         GlobalBest = particles(i).Best;
     end
 end
 
-% ³õÊ¼»¯Ã¿Ò»´úµÄ×îÓÅÊÊÓ¦¶È£¬ÓÃÓÚ»­ÊÊÓ¦¶Èµü´úÍ¼
+% åˆå§‹åŒ–æ¯ä¸€ä»£çš„æœ€ä¼˜é€‚åº”åº¦ï¼Œç”¨äºç”»é€‚åº”åº¦è¿­ä»£å›¾
 fitness_beat_iters = zeros(N,2);
 
-%% Ñ­»·
+%% å¾ªç¯
 for iter = 1:N
     for i = 1:M  
-        % ¸üĞÂËÙ¶È
+        % æ›´æ–°é€Ÿåº¦
         particles(i).v.x = w*particles(i).v.x ...
             + c1*rand([1,pointNum]).*(particles(i).Best.pos.x-particles(i).pos.x) ...
             + c2*rand([1,pointNum]).*(GlobalBest.pos.x-particles(i).pos.x);
@@ -106,7 +103,7 @@ for iter = 1:N
             + c1*rand([1,pointNum]).*(particles(i).Best.pos.z-particles(i).pos.z) ...
             + c2*rand([1,pointNum]).*(GlobalBest.pos.z-particles(i).pos.z);
 
-        % ÅĞ¶ÏÊÇ·ñÎ»ÓÚËÙ¶È½çÏŞÒÔÄÚ
+        % åˆ¤æ–­æ˜¯å¦ä½äºé€Ÿåº¦ç•Œé™ä»¥å†…
         particles(i).v.x = min(particles(i).v.x, velBound(1,2));
         particles(i).v.x = max(particles(i).v.x, velBound(1,1));
         particles(i).v.y = min(particles(i).v.y, velBound(2,2));
@@ -114,12 +111,12 @@ for iter = 1:N
         particles(i).v.z = min(particles(i).v.z, velBound(3,2));
         particles(i).v.z = max(particles(i).v.z, velBound(3,1));
         
-        % ¸üĞÂÁ£×ÓÎ»ÖÃ
+        % æ›´æ–°ç²’å­ä½ç½®
         particles(i).pos.x = particles(i).pos.x + particles(i).v.x;
         particles(i).pos.y = particles(i).pos.y + particles(i).v.y;
         particles(i).pos.z = particles(i).pos.z + particles(i).v.z;
 
-        % ÅĞ¶ÏÊÇ·ñÎ»ÓÚÁ£×ÓÎ»ÖÃ½çÏŞÒÔÄÚ
+        % åˆ¤æ–­æ˜¯å¦ä½äºç²’å­ä½ç½®ç•Œé™ä»¥å†…
         particles(i).pos.x = max(particles(i).pos.x, posBound(1,1));
         particles(i).pos.x = min(particles(i).pos.x, posBound(1,2));
         particles(i).pos.y = max(particles(i).pos.y, posBound(2,1));
@@ -127,27 +124,27 @@ for iter = 1:N
         particles(i).pos.z = max(particles(i).pos.z, posBound(3,1));
         particles(i).pos.z = min(particles(i).pos.z, posBound(3,2));
         
-        % ÊÊÓ¦¶È¼ÆËã
+        % é€‚åº”åº¦è®¡ç®—
         [flag,fitness,path] = calFitness(startPos, goalPos,X,Y,Z, particles(i).pos);
         
-        % Åö×²¼ì²âÅĞ¶Ï
+        % ç¢°æ’æ£€æµ‹åˆ¤æ–­
         if flag == 1
-            % Èôflag=1£¬±íÃ÷´ËÂ·¾¶½«ÓëÕÏ°­ÎïÏà½»£¬ÔòÔö´óÊÊÓ¦¶ÈÖµ
+            % è‹¥flag=1ï¼Œè¡¨æ˜æ­¤è·¯å¾„å°†ä¸éšœç¢ç‰©ç›¸äº¤ï¼Œåˆ™å¢å¤§é€‚åº”åº¦å€¼
             particles(i).fitness = 1000*fitness;
             particles(i).path = path;
         else
-            % ·ñÔò£¬±íÃ÷¿ÉÒÔÑ¡Ôñ´ËÂ·¾¶
+            % å¦åˆ™ï¼Œè¡¨æ˜å¯ä»¥é€‰æ‹©æ­¤è·¯å¾„
             particles(i).fitness = fitness;
             particles(i).path = path;
         end
         
-        % ¸üĞÂ¸öÌåÁ£×Ó×îÓÅ
+        % æ›´æ–°ä¸ªä½“ç²’å­æœ€ä¼˜
         if (particles(i).fitness(1) < particles(i).Best.fitness(1))&(particles(i).fitness(2) < particles(i).Best.fitness(2))
             particles(i).Best.pos = particles(i).pos;
             particles(i).Best.fitness = particles(i).fitness;
             particles(i).Best.path = particles(i).path;
             
-            % ¸üĞÂÈ«¾Ö×îÓÅÁ£×Ó
+            % æ›´æ–°å…¨å±€æœ€ä¼˜ç²’å­
             if (particles(i).Best.fitness(1) < GlobalBest.fitness(1))&(particles(i).Best.fitness(2) < GlobalBest.fitness(2))
                 GlobalBest = particles(i).Best;
             end
@@ -155,30 +152,30 @@ for iter = 1:N
     end
     
     
-    % °ÑÃ¿Ò»´úµÄ×îÓÅÁ£×Ó¸³Öµ¸øfitness_beat_iters
+    % æŠŠæ¯ä¸€ä»£çš„æœ€ä¼˜ç²’å­èµ‹å€¼ç»™fitness_beat_iters
     fitness_beat_iters(iter,1) = GlobalBest.fitness(1);
     fitness_beat_iters(iter,2) = GlobalBest.fitness(2);
     
-    % ÔÚÃüÁîĞĞ´°¿ÚÏÔÊ¾Ã¿Ò»´úµÄĞÅÏ¢
-    disp(['µÚ' num2str(iter) '´ú:' '×îÓÅÊÊÓ¦¶È1 = ' num2str(fitness_beat_iters(iter,1))  '×îÓÅÊÊÓ¦¶È2 = ' num2str(fitness_beat_iters(iter,2))]);
+    % åœ¨å‘½ä»¤è¡Œçª—å£æ˜¾ç¤ºæ¯ä¸€ä»£çš„ä¿¡æ¯
+    disp(['ç¬¬' num2str(iter) 'ä»£:' 'æœ€ä¼˜é€‚åº”åº¦1 = ' num2str(fitness_beat_iters(iter,1))  'æœ€ä¼˜é€‚åº”åº¦2 = ' num2str(fitness_beat_iters(iter,2))]);
     
-    % »­Í¼
+    % ç”»å›¾
     plotFigure(startPos,goalPos,X,Y,Z,GlobalBest);
     pause(0.001);
 end
 
-%% ½á¹ûÕ¹Ê¾
-% ÀíÂÛ×îĞ¡ÊÊÓ¦¶È£ºÖ±Ïß¾àÀë
+%% ç»“æœå±•ç¤º
+% ç†è®ºæœ€å°é€‚åº”åº¦ï¼šç›´çº¿è·ç¦»
 fitness_best = norm(startPos - goalPos);
-disp([ 'ÀíÂÛ×îÓÅÊÊÓ¦¶È = ' num2str(fitness_best)]);
+disp([ 'ç†è®ºæœ€ä¼˜é€‚åº”åº¦ = ' num2str(fitness_best)]);
 
-% »­ÊÊÓ¦¶Èµü´úÍ¼
+% ç”»é€‚åº”åº¦è¿­ä»£å›¾
 figure
 plot(fitness_beat_iters(:,1),'LineWidth',2);
-xlabel('µü´ú´ÎÊı');
-ylabel('×îÓÅÊÊÓ¦¶È1');
+xlabel('è¿­ä»£æ¬¡æ•°');
+ylabel('æœ€ä¼˜é€‚åº”åº¦1');
 
 figure
 plot(fitness_beat_iters(:,2),'LineWidth',2);
-xlabel('µü´ú´ÎÊı');
-ylabel('×îÓÅÊÊÓ¦¶È2');
+xlabel('è¿­ä»£æ¬¡æ•°');
+ylabel('æœ€ä¼˜é€‚åº”åº¦2');
