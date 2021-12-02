@@ -1,5 +1,5 @@
 function [flag,fitness,path] = calFitness(startPos, goalPos,X,Y,Z, pos)
-% ÀûÓÃÈı´ÎÑùÌõÄâºÏÉ¢µã
+% åˆ©ç”¨ä¸‰æ¬¡æ ·æ¡æ‹Ÿåˆæ•£ç‚¹
 x_seq=[startPos(1), pos.x, goalPos(1)];
 y_seq=[startPos(2), pos.y, goalPos(2)];
 z_seq=[startPos(3), pos.z, goalPos(3)];
@@ -15,7 +15,7 @@ Z_seq = spline(i_seq,z_seq,I_seq);
 path = [X_seq', Y_seq', Z_seq'];
 
 
-% ÅĞ¶ÏÉú³ÉµÄÇúÏßÊÇ·ñÓëÓëÕÏ°­ÎïÏà½»
+% åˆ¤æ–­ç”Ÿæˆçš„æ›²çº¿æ˜¯å¦ä¸ä¸éšœç¢ç‰©ç›¸äº¤
 flag = 0;
 for i = 2:size(path,1)
     x = path(i,1);
@@ -41,23 +41,23 @@ end
             
     
 
-%% ¼ÆËãÈı´ÎÑùÌõµÃµ½µÄÀëÉ¢µãµÄÂ·¾¶³¤¶È£¨ÊÊÓ¦¶È£©
+%% è®¡ç®—ä¸‰æ¬¡æ ·æ¡å¾—åˆ°çš„ç¦»æ•£ç‚¹çš„è·¯å¾„é•¿åº¦ï¼ˆé€‚åº”åº¦ï¼‰
 dx = diff(X_seq);
 dy = diff(Y_seq);
 dz = diff(Z_seq);
 total_h=sum(Z_seq)/100;
 
 fitness=[];
-%Â·¾¶³¤¶È
+%è·¯å¾„é•¿åº¦
 fitness(1) = sum(sqrt(dx.^2 + dy.^2 + dz.^2));%/sqrt((goalPos(1)-startPos(1)).^2+(goalPos(2)-startPos(2)).^2+(goalPos(3)-startPos(3)).^2);
-% Â·¾¶¸ß¶È
+% è·¯å¾„é«˜åº¦
 fitness(2)=0;
 % for i=1:6
 %     fitness(2)=fitness(2)+total_h;%(abs(path(i+1,3)-path(i,3))/2.0-0)/(120);
 % end
 fitness(2)=total_h;
 
-%¸©Ñö½Ç
+%è¿˜å¯ä»¥è€ƒè™‘ä¿¯ä»°è§’
 
 
     
